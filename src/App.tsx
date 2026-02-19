@@ -30,6 +30,7 @@ function App() {
   }, []);
 
   const fetchStatus = async () => {
+  try {
     const { data, error } = await supabase
       .from('dog_status')
       .select('id, status, updated_at')
@@ -43,9 +44,16 @@ function App() {
     if (data) {
       setStatus(data.status);
       setRecordId(data.id);
+    } else {
+      console.error('No dog_status row found in database.');
     }
-    setLoading(false);
-  };
+  } catch (err) {
+    console.error('Unexpected fetch error:', err);
+  } finally {
+    setLoading(false); 
+  }
+};
+
 
   const subscribeToChanges = () => {
     const channel = supabase
